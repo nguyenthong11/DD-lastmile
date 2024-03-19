@@ -11,6 +11,8 @@ def create_data_modelTW():
     data['time_windows'] = []
     data['num_vehicles'] = 4
     data['depot'] = 0
+    data['vehicle_capacities']
+    data['demands']
     return data
 
 #----
