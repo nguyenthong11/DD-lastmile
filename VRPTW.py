@@ -4,7 +4,7 @@ from ortools.constraint_solver import routing_enums_pb2
 from ortools.constraint_solver import pywrapcp
 import pickle
 
-def create_data_modelTW():
+def create_data_modelTW(): # if you want to add your data here, do not load data.pkl, use this function instead
     """Stores the data for the problem."""
     data = {}
     data['time_matrix'] = []
@@ -53,8 +53,6 @@ def print_solution(data, manager, routing, solution):
 
 def SolveProblemTW(data):
     """Solve the VRP with time windows."""
-    # Instantiate the data problem.
-    # data = create_data_modelTW()
 
     # Create the routing index manager.
     manager = pywrapcp.RoutingIndexManager(len(data['time_matrix']),
