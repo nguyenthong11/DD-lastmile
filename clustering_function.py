@@ -13,8 +13,8 @@ def Clustering_constraint(CLIENTSi, Nbac, flag_time):
     CLIENTSk = CLIENTSi[CLIENTSi['# BACS']>1]
     for ID in CLIENTSk['ID']: # replicate the locations
         k = (CLIENTSk[CLIENTSk['ID'] == ID]['# BACS']).values[0]
-        CLIENTSi = CLIENTSi.append([CLIENTSi[CLIENTSi['ID'] == ID]]*(k-1)
-                                   ,ignore_index=True)
+        CLIENTSi = pd.concat([CLIENTSi,pd.concat([CLIENTSi[CLIENTSi['ID'] == ID]]*(k-1))],
+                             ignore_index=True)
     if flag_time==1:
         dfCOORi = CLIENTSi[['LATITUDE','LONGITUDE','begin_time']]
     elif flag_time==0:
@@ -44,9 +44,8 @@ def Clustering_constraint(CLIENTSi, Nbac, flag_time):
     sum_clus = pd.DataFrame(dtype=np.int8)
     for c in CLIENTSi['CLUSTER'].unique():
         temp = CLIENTSi[CLIENTSi['CLUSTER'] == c]
-        sum_clus  = sum_clus.append([pd.DataFrame([[temp['# BACS'].sum()
-                                                    ,len(temp),c]],columns=Name)]
-                                    , ignore_index=True)
+        d = pd.DataFrame([[temp['# BACS'].sum(),len(temp),c]],columns=Name)
+        sum_clus  = pd.concat([sum_clus, d], ignore_index=True)
     return CLIENTSi, sum_clus, clf.cluster_centers_
 # ----------------------------------------------------------------------------------------------------
 # -------------------------- Clustreing constraint velocargo -----------------------------------------
