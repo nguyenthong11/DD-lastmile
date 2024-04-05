@@ -15,8 +15,7 @@ def create_data_modelTW(): # if you want to add your data here, do not load data
     data['demands'] = []
     return data
 
-def print_solution(data, manager, routing, solution):
-    """Prints solution on console."""
+def VRPTW(data, manager, routing, solution):
     #print(f'Objective: {solution.ObjectiveValue()}')
     time_dimension = routing.GetDimensionOrDie('Time')
     total_time = 0
@@ -138,9 +137,9 @@ def SolveProblemTW(data):
     solution = routing.SolveWithParameters(search_parameters)
     print("Solver status: ", routing.status())
 
-    # Print solution on console.
+    # Print solution
     if solution:
-        route, TIME, total_time, time_p_route, Nvehicle = print_solution(data, manager, routing, solution)
+        route, TIME, total_time, time_p_route, Nvehicle = VRPTW(data, manager, routing, solution)
     else:
         print('No solution')
 
