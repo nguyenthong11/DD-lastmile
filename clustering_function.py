@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 from k_means_constrained import KMeansConstrained
 
-# max number of BACS per vehicle
+# max number of bins per vehicle
 def Clustering_constraint(CLIENTSi, Nbac, flag_time): 
     CLIENTSk = CLIENTSi[CLIENTSi['# BACS']>1]
     for ID in CLIENTSk['ID']: # replicate the locations
@@ -27,7 +27,7 @@ def Clustering_constraint(CLIENTSi, Nbac, flag_time):
     clf.fit_predict(dfCOORi.to_numpy())
     CLIENTSi['CLUSTER'] = clf.labels_
     '''explain: if one client is clustered into more than one cluster,
-        that client is merged into one cluter, meaning 1 client to ONLY 1 cluster'''
+        that client is merged into one cluster ONLY'''
     df_temp = CLIENTSi.drop_duplicates(ignore_index=True)
     for ID in df_temp['ID'].unique():
         temp = df_temp[df_temp['ID'] == ID]
@@ -82,28 +82,3 @@ def Clustering_constraint_velo(CLIENTSi, Nbac, flag_time):
         sum_clus  = sum_clus.append([pd.DataFrame([[len(temp),c]],columns=Name)]
                                     , ignore_index=True)
     return CLIENTSi_new, sum_clus, clf.cluster_centers_
-
-# client contraint
-def Clustering_(CLIENTSi, max_client, flag_time): 
-    if flag_time==1:
-        dfCOORi = CLIENTSi[['LATITUDE','LONGITUDE','begin_time']]
-    elif flag_time==0:
-        dfCOORi = CLIENTSi[['LATITUDE','LONGITUDE']]
-    else:
-        dfCOORi = CLIENTSi[['begin_time']]
-    # Ncluster = int(np.round((max(CLIENTSi['begin_time'])-min(CLIENTSi['begin_time']))/time_slot))
-    Ncluster = int(np.ceil(len(dfCOORi)/max_client))
-    
-    clf = KMeansConstrained(n_clusters=Ncluster,size_min=2,size_max=max_client,random_state=0)
-
-    clf.fit_predict(dfCOORi.to_numpy())
-    CLIENTSi['CLUSTER'] = clf.labels_
-
-    Name = ['nb_BAC', 'nb_client','label']
-    sum_clus = pd.DataFrame(dtype=np.int8)
-    for c in CLIENTSi['CLUSTER'].unique():
-        temp = CLIENTSi[CLIENTSi['CLUSTER'] == c]
-        sum_clus  = sum_clus.append([pd.DataFrame([[temp['# BACS'].sum()
-                                                    ,len(temp),c]],columns=Name)]
-                                    , ignore_index=True)
-    return CLIENTSi, sum_clus, clf.cluster_centers_
