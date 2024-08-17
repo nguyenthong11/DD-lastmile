@@ -11,7 +11,7 @@ VRPTW.py\
   package ortools.constraint_solver
 
 Articles:\
-[Last mile delivery of grocery bins in Paris: costs from routing strategies with autonomous delivery vehicles](https://doi.org/10.1504/IJISM.2023.132180)\
-[Estimating costs and CO2 emissions for last mile delivery of groceries in Paris using alternative modes and routing strategies](https://doi.org/10.1080/13675567.2023.2283074)
+1. [Last mile delivery of grocery bins in Paris: costs from routing strategies with autonomous delivery vehicles](https://doi.org/10.1504/IJISM.2023.132180)\
+2. [Estimating costs and CO2 emissions for last mile delivery of groceries in Paris using alternative modes and routing strategies](https://doi.org/10.1080/13675567.2023.2283074)
 
 DATASET is not available due to legal restrictions
