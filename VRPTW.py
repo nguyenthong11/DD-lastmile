@@ -1,12 +1,11 @@
 """Vehicles Routing Problem (VRP) with Time Windows."""
-
 from ortools.constraint_solver import routing_enums_pb2
 from ortools.constraint_solver import pywrapcp
 import pickle
 
 def create_data_modelTW(): # if you want to add your data here, do not load data.pkl, use this function instead
     """Stores the data for the problem."""
-    data = {}
+    data: dict = {}
     data['time_matrix'] = []
     data['time_windows'] = []
     data['num_vehicles'] = 4
@@ -21,12 +20,12 @@ def VRPTW(data, manager, routing, solution):
     total_time = 0
     route = []
     TIME = []
-    time_p_route = []
-    Nvehicle = 0
+    time_p_route: list[int] = []
+    Nvehicle: int = 0
     for vehicle_id in range(data['num_vehicles']):
         index = routing.Start(vehicle_id)
         plan_output = 'Route for vehicle {}:\n'.format(vehicle_id)
-        routeI = []
+        routeI: list = []
         while not routing.IsEnd(index):
             time_var = time_dimension.CumulVar(index)
             plan_output += '{0} Time({1},{2}) -> \n'.format(
@@ -40,8 +39,8 @@ def VRPTW(data, manager, routing, solution):
                                                     solution.Min(time_var),
                                                     solution.Max(time_var))
         plan_output += 'Time of the route: {}min\n'.format(solution.Min(time_var))
-        if solution.Min(time_var)>0:
-            Nvehicle +=1
+        if solution.Min(time_var) > 0:
+            Nvehicle += 1
             time_p_route.append(solution.Min(time_var))
         # print(plan_output)
         route.append(routeI)
@@ -104,8 +103,9 @@ def SolveProblemTW(data):
         routing.AddVariableMinimizedByFinalizer(
             time_dimension.CumulVar(routing.End(i)))
 # --------------------------------------------------------
+
     # Add Capacity constraint.
-    def demand_callback(from_index):
+    def demand_callback(from_index: int) -> int:
         """Returns the demand of the node."""
         # Convert from routing variable Index to demands NodeIndex.
         from_node = manager.IndexToNode(from_index)
@@ -139,16 +139,15 @@ def SolveProblemTW(data):
 
     # Print solution
     if solution:
-        route, TIME, total_time, time_p_route, Nvehicle = VRPTW(data, manager, routing, solution)
+        return VRPTW(data, manager, routing, solution)
     else:
         print('No solution')
+        return
 
-    return route, TIME, total_time, time_p_route, Nvehicle
-
-def main():
+def main() -> None:
     with open('data.pkl', 'rb') as f:
         data = pickle.load(f)
-    route, TIME, total_time, time_p_route, Nveh = SolveProblemTW(data)
+    (route, TIME, total_time, time_p_route, Nveh) = SolveProblemTW(data)
     print(route)
     print(f"Total Time of all routes: {total_time} minutes")
 
