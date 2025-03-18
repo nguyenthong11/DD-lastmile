@@ -23,11 +23,13 @@ def Clustering_constraint(CLIENTSi, Nbac: int, flag_time: bool=1):
     else:
         dfCOORi = CLIENTSi[['begin_time']]
     Ncluster = int(np.ceil(len(dfCOORi)/Nbac))
-    clf = KMeansConstrained(n_clusters=Ncluster,size_min=3,size_max=Nbac
-                            ,random_state=0)
+    clf = KMeansConstrained(n_clusters=Ncluster,
+                            size_min=3,
+                            size_max=Nbac,
+                            random_state=0)
     clf.fit_predict(dfCOORi.to_numpy())
     CLIENTSi['CLUSTER'] = clf.labels_
-    '''explain: if one client is clustered into more than one cluster,
+    '''explain: if one client is labeled into more than one cluster,
         that client is merged into one cluster ONLY'''
     df_temp = CLIENTSi.drop_duplicates(ignore_index=True)
     for ID in df_temp['ID'].unique():
