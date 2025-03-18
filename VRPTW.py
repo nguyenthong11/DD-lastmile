@@ -144,12 +144,12 @@ def SolveProblemTW(data):
         print('No solution')
         return
 
-def main() -> None:
-    with open('data.pkl', 'rb') as f:
-        data = pickle.load(f)
-    (route, TIME, total_time, time_p_route, Nveh) = SolveProblemTW(data)
-    print(route)
-    print(f"Total Time of all routes: {total_time} minutes")
+# def main() -> None:
+#     with open('data.pkl', 'rb') as f:
+#         data = pickle.load(f)
+#     (route, TIME, total_time, time_p_route, Nveh) = SolveProblemTW(data)
+#     print(route)
+#     print(f"Total Time of all routes: {total_time} minutes")
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()
