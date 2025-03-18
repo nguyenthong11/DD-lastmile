@@ -9,7 +9,8 @@ import pandas as pd
 from k_means_constrained import KMeansConstrained
 
 # max number of bins per vehicle
-def Clustering_constraint(CLIENTSi, Nbac, flag_time): 
+def Clustering_constraint(CLIENTSi, Nbac: int, flag_time: bool=1):
+
     CLIENTSk = CLIENTSi[CLIENTSi['# BACS']>1]
     for ID in CLIENTSk['ID']: # replicate the locations
         k = (CLIENTSk[CLIENTSk['ID'] == ID]['# BACS']).values[0]
@@ -46,10 +47,12 @@ def Clustering_constraint(CLIENTSi, Nbac, flag_time):
         temp = CLIENTSi[CLIENTSi['CLUSTER'] == c]
         d = pd.DataFrame([[temp['# BACS'].sum(),len(temp),c]],columns=Name)
         sum_clus  = pd.concat([sum_clus, d], ignore_index=True)
+
     return CLIENTSi, sum_clus, clf.cluster_centers_
 # ----------------------------------------------------------------------------------------------------
 # -------------------------- Clustreing constraint velocargo -----------------------------------------
-def Clustering_constraint_velo(CLIENTSi, Nbac, flag_time): 
+def Clustering_constraint_velo(CLIENTSi, Nbac: int, flag_time): 
+
     CLIENTSk = CLIENTSi[CLIENTSi['# BACS']>1]
     for ID in CLIENTSk['ID']: # replicate the locations
         k = (CLIENTSk[CLIENTSk['ID'] == ID]['# BACS']).values[0]
