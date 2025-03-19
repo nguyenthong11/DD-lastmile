@@ -51,39 +51,3 @@ def Clustering_constraint(CLIENTSi, Nbac: int, flag_time: bool=1):
         sum_clus  = pd.concat([sum_clus, d], ignore_index=True)
 
     return CLIENTSi, sum_clus, clf.cluster_centers_
-# ----------------------------------------------------------------------------------------------------
-# -------------------------- Clustreing constraint velocargo -----------------------------------------
-def Clustering_constraint_velo(CLIENTSi, Nbac: int, flag_time): 
-
-    CLIENTSk = CLIENTSi[CLIENTSi['# BACS']>1]
-    for ID in CLIENTSk['ID']: # replicate the locations
-        k = (CLIENTSk[CLIENTSk['ID'] == ID]['# BACS']).values[0]
-        CLIENTSi = CLIENTSi.append([CLIENTSi[CLIENTSi['ID'] == ID]]*(k-1)
-                                   ,ignore_index=True)
-    if flag_time==1:
-        dfCOORi = CLIENTSi[['LATITUDE','LONGITUDE','begin_time']]
-    else:
-        dfCOORi = CLIENTSi[['LATITUDE','LONGITUDE']]
-    Ncluster = int(np.around(len(dfCOORi)/Nbac))+1
-    clf = KMeansConstrained(n_clusters=Ncluster,size_min=3,size_max=Nbac
-                            ,random_state=0)
-    clf.fit_predict(dfCOORi.to_numpy())
-    CLIENTSi['CLUSTER'] = clf.labels_
-    '''explain: in case one client clustered to more than one cluster
-        that client is considered as multiple clients with different size of BAC'''
-    CLIENTSi_new = pd.DataFrame(columns=CLIENTSi.columns)
-    for c in CLIENTSi['CLUSTER'].unique():
-        temp = CLIENTSi[CLIENTSi['CLUSTER'] == c]
-        for cliID in temp['ID'].unique():
-            temp2 = temp[temp['ID'] == cliID]
-            temp2['# BACS'] = len(temp2)
-            CLIENTSi_new = CLIENTSi_new.append(temp2.iloc[0])
-
-    #CLIENTSi = CLIENTSi.drop_duplicates(ignore_index=True)
-    Name = ['nb_client','label']
-    sum_clus = pd.DataFrame(dtype=np.int8)
-    for c in CLIENTSi_new['CLUSTER'].unique():
-        temp = CLIENTSi_new[CLIENTSi_new['CLUSTER'] == c]
-        sum_clus  = sum_clus.append([pd.DataFrame([[len(temp),c]],columns=Name)]
-                                    , ignore_index=True)
-    return CLIENTSi_new, sum_clus, clf.cluster_centers_

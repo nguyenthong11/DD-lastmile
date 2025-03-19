@@ -1,12 +1,8 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 Created on Wed Jan 12 11:30:34 2022
 @author: quoc-thongnguyen
 """
 
-# from __future__ import division
-# from __future__ import print_function
 import json
 import requests
 
