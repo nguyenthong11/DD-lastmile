@@ -15,4 +15,5 @@ Articles:
 2. [Estimating costs and CO2 emissions for last mile delivery of groceries in Paris using alternative modes and routing strategies](https://doi.org/10.1080/13675567.2023.2283074)
 
 API from [openrouteservice](https://openrouteservice.org/) is required (free) to execute the code
+
 DATASET is modified due to legal restrictions
