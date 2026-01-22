@@ -22,7 +22,7 @@ def route_distance(route, Dist_matrix):
     return D, Dtour
 
 
-def send_request(list_coordinates: list, V: int, API: str): # response from open_route_service
+def send_request(list_coordinates: list, vehicle: str, API: str): # response from open_route_service
     body = {"locations": None,
             "metrics": ["distance","duration"],
             "units": "m"}
@@ -32,10 +32,8 @@ def send_request(list_coordinates: list, V: int, API: str): # response from open
         'Authorization': API,
         'Content-Type': 'application/json; charset=utf-8'
         }
-    if V == 0: vehicle = 'driving-car'
-    elif V == 1: vehicle = 'cycling-electric'
-    else: vehicle = 'foot-hiking'
-    url = 'https://api.openrouteservice.org/v2/matrix/'+ vehicle
+    base_url = "https://api.openrouteservice.org/v2/matrix"
+    url = f"{base_url}/{vehicle}"
     try:
         call = requests.post(url, json=body, headers=headers)
         response = json.loads(call.text)
