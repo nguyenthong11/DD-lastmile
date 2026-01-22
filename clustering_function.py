@@ -7,7 +7,6 @@ import numpy as np
 import pandas as pd
 from k_means_constrained import KMeansConstrained
 
-# max number of bins per vehicle
 def Clustering_constraint(CLIENTSi, Nbac: int, flag_time: bool = True):
     """
     Parameters:
@@ -47,16 +46,54 @@ def Clustering_constraint(CLIENTSi, Nbac: int, flag_time: bool = True):
     # ==================== STEP 3: Constrained KMeans ====================
 
     Ncluster = int(np.ceil(len(coordinates)/Nbac))
+    duplicates = CLIENTSi[CLIENTSi['# BACS'] > 1]
+
+    if not duplicates.empty():
+        for _, row in duplicates.iterrows():
+            ID = row['ID']
+            k = row['# BACS']
+            # Add k-1 duplicates
+            CLIENTSi = pd.concat([
+                CLIENTSi,
+                CLIENTSi[CLIENTSi['ID'] == ID].copy()] * (k - 1),
+                ignore_index=True)
+
+    # ==================== STEP 2: Select coordinates to cluster ====================
+    if flag_time:
+        coordinates = CLIENTSi[['LATITUDE','LONGITUDE','begin_time']]
+    else: 
+        coordinates = CLIENTSi[['LATITUDE','LONGITUDE']]
+
+    # ==================== STEP 3: Constrained KMeans ====================
+
+    Ncluster = int(np.ceil(len(coordinates)/Nbac))
     clf = KMeansConstrained(n_clusters=Ncluster,
                             size_min=3,
                             size_max=Nbac,
                             random_state=0)
     clf.fit_predict(coordinates.to_numpy())
+    clf.fit_predict(coordinates.to_numpy())
     CLIENTSi['CLUSTER'] = clf.labels_
+
+    # ==================== STEP 4: Merge clients across clusters ====================
 
     # ==================== STEP 4: Merge clients across clusters ====================
     '''explain: if one client is labeled into more than one cluster,
         that client is merged into one cluster ONLY'''
+    
+    client_clusters = CLIENTSi.groupby('ID')['CLUSTER'].unique().to_dict()
+    
+    for ID, cluster_ids in client_clusters.items():
+        # If client is in multiple clusters, find the largest cluster
+        if len(cluster_ids) > 1:
+            # Get cluster sizes once (not multiple times in loop)
+            cluster_sizes = CLIENTSi['CLUSTER'].value_counts()
+            min_cluster = cluster_sizes.idxmin()
+            
+            # Assign all client's records to this cluster
+            CLIENTSi.loc[CLIENTSi['ID'] == ID, 'CLUSTER'] = min_cluster
+
+    # ==================== STEP 5: Remove duplicates ====================
     
     client_clusters = CLIENTSi.groupby('ID')['CLUSTER'].unique().to_dict()
     
@@ -89,4 +126,21 @@ def Clustering_constraint(CLIENTSi, Nbac: int, flag_time: bool = True):
     sum_clus = pd.DataFrame(cluster_stats)
     cluster_centers = clf.cluster_centers_
 
+    # ==================== STEP 6: Summarize clusters ====================
+    cluster_stats = []
+    for cluster_id in CLIENTSi['CLUSTER'].unique():
+        cluster_data = CLIENTSi[CLIENTSi['CLUSTER'] == cluster_id]
+        total_bacs = cluster_data['# BACS'].sum()
+        num_clients = len(cluster_data)
+        
+        cluster_stats.append({
+            'nb_BAC': total_bacs,
+            'nb_client': num_clients,
+            'label': cluster_id
+        })
+    
+    sum_clus = pd.DataFrame(cluster_stats)
+    cluster_centers = clf.cluster_centers_
+
+    return CLIENTSi, sum_clus, cluster_centers
     return CLIENTSi, sum_clus, cluster_centers
