@@ -137,10 +137,9 @@ def calculate_route_distances(
     return total_distance, route_distances
 
 def send_request(list_coordinates: list, vehicle: str, API: str): # response from open_route_service
-    body = {"locations": None,
+    body = {"locations": list_coordinates,
             "metrics": ["distance","duration"],
             "units": "m"}
-    body["locations"] = list_coordinates
     headers = {
         'Accept': 'application/json, application/geo+json, application/gpx+xml, img/png; charset=utf-8',
         'Authorization': API,
