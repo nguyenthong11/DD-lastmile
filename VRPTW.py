@@ -2,7 +2,7 @@
 from ortools.constraint_solver import routing_enums_pb2
 from ortools.constraint_solver import pywrapcp
 
-def create_data_modelTW(): # if you want to add your data here, do not load data.pkl, use this function instead
+def create_data_modelTW(): 
     """Stores the data for the problem."""
     data: dict = {}
     data['time_matrix'] = []
